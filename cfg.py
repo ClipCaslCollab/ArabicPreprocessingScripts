@@ -1,0 +1,8 @@
+XML_INPUT_PATH = "/fs/clip-casl-sentiment/tmp/arabic-sentiment-general.fixed.xml"
+SCRATCH_PATH = "/fs/clip-casl-sentiment/scratch"
+ITM_HTML_TEMPLATE_PATH = "/fs/clip-casl-sentiment/scripts/template.html"
+MADA_PATH = "/fs/clip-casl-sentiment/MADAMIRA-release-09232013-1.0-beta-BOLT-MSA-ONLY"
+MADA_JAR = "MADAMIRA-release-09232013-1.0-beta-BOLT-MSA-ONLY.jar"
+# MADA_CFG = "config/defaultLibSVMConfiguration.xml"
+MADA_CFG = "config/madamira.xml"
+MALLET_BIN_PATH = "/fs/clip-casl-sentiment/mallet-2.0.7/bin/mallet"
