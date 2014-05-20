@@ -1,3 +1,7 @@
+"""seeded_assn.py
+
+For converting ITM's model.states file to SHLDA's seeded assignment input format.
+"""
 import sys
 
 def main(argv):

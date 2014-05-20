@@ -3,6 +3,7 @@ import cPickle as pk
 
 
 class Step(object):
+    """Abstract preprocessing step class"""
 
     def __init__(self, save=None):
         self._save = save
@@ -24,6 +25,7 @@ class Step(object):
 
 
 class Pipe(object):
+    """Executes a sequence of preprocessing steps"""
 
     def __init__(self, load_intermediate=False):
         self._steps = []
