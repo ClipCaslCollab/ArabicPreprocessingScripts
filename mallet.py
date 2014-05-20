@@ -9,7 +9,7 @@ class Mallet:
 
     def import_file(self, path, output, lang):
         if lang == "ar":
-            os.system(self._binary + ' import-file --input ' + path + ' --keep-sequence --token-regex \'[\p{L}\p{P}]*\p{L}\' --output ' + output)
+            os.system(self._binary + ' import-file --input ' + path + ' --keep-sequence --token-regex \'[\p{L}\p{M}]+\' --output ' + output)
         elif lang == "en":
             os.system(self._binary + ' import-file --input ' + path + ' --keep-sequence --output ' + output)
 

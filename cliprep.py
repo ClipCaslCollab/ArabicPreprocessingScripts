@@ -3,56 +3,47 @@ import cPickle as pk
 import os
 import sys
 
-import xml_to_pk
-import oneline_to_pk
+import import_corpus
 import tok
 import subsample
 import cv
-import pk_to_itm
-import pk_to_shlda
+import export
 
 
-def load_ser_docs(inpath):
-    print inpath
-    with open(inpath) as infile:
-        return pk.load(infile)
-    return None
+def load_xform_save(Step, inpath, outpath, **kwargs):
+    step = Step(save=outpath, **kwargs)
+    with open(inpath) as f:
+        docs = step.load(f)
+        docs = step.xform(docs)
+        step.save(docs)
 
 
 def arasent_import(intype, inpath, outpath):
+    if intype == "flat":
+        load_xform_save(import_corpus.OneDocPerLineLoader, inpath, outpath)
+    if intype == "csv":
+        load_xform_save(import_corpus.CsvLoader, inpath, outpath)
     if intype == "xml":
-        xml_to_pk.load_and_serialize(inpath, outpath)
-    elif intype == "flat":
-        oneline_to_pk.load_and_serialize(inpath, outpath)
+        load_xform_save(import_corpus.XmlLoader, inpath, outpath)
 
 
 def tokenize(inpath, outpath, lang):
-    tok.tokenize_and_replace(load_ser_docs(inpath), outpath, lang)
+    load_xform_save(tok.Tokenizer, inpath, outpath, lang=lang)
 
 
 def main_subsample(n, inpath, outpath):
-    subsample.subsample_and_save(outpath, load_ser_docs(inpath), n)
+    load_xform_save(subsample.Subsampler, inpath, outpath, n=n)
 
 
 def prep_cv(inpath, outpath, n, split):
     cv.prep_cv_and_save(load_ser_docs(inpath), outpath, n=n, split=split)
 
 
-def export(cv, outype, inpath, outpath, name, lang):
-    if outype == "itm":
-        if cv:
-            print "No notion of cross validation in itm"
-        else:
-            pk_to_itm.make_itm_input(load_ser_docs(inpath), outpath, name, lang=lang)
-    elif outype == "shlda":
-        if cv:
-            pk_to_shlda.make_cv_shlda_input(inpath, outpath)
-        else:
-            pk_to_shlda.make_shlda_input(load_ser_docs(inpath), outpath, "arbooks")
-    elif outype == "svml":
-        print "Export to svm lite not implemented yet"
-    elif outype == "mlt":
-        print "Export to mallet format not implemented yet"
+def export(cv, outtype, inpath, outpath, name, lang):
+    if outtype == "itm":
+        load_xform_save(export.ItmExporter, inpath, outpath, name=name)
+    elif outtype  == "shlda":
+        load_xform_save(export.ShldaExporter, inpath, outpath, name=name)
 
 
 def main(argv):
@@ -60,7 +51,7 @@ def main(argv):
     subparsers = parser.add_subparsers(dest="cmd", help="Commands")
 
     import_parser = subparsers.add_parser("import", help="Import files to IR")
-    import_parser.add_argument("-t", dest="type", choices=["xml", "flat"], required=True)
+    import_parser.add_argument("-t", dest="type", choices=["csv", "xml", "flat"], required=True)
     import_parser.add_argument("-o", dest="output", required=True, help="Output IR file")
     import_parser.add_argument("input", help="Input file")
 

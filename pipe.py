@@ -34,14 +34,17 @@ class Pipe(object):
 
     def run(self, infile):
         assert len(self._steps) > 0, "You can't have a preprocessing pipeline without any steps"
-        docs = self._steps[0].load(infile)
+        docs = []
         start = 0
         if self._load_intermediate:
             for n, step in enumerate(self._steps[:-1]):
                 if step.save_file and os.path.isfile(step.save_file):
-                    with open(step.save_file) as f:
-                        start = n + 1
-                        docs = self._steps[start].load(f)
+                    start = n + 1
+        if start:
+            with open(self._steps[start - 1]) as f:
+                docs = self._steps[start].load(f)
+        else:
+            docs = self._steps[0].load(infile)
         for step in self._steps[start:]:
             docs = step.xform(docs)
             if step.save_file:
