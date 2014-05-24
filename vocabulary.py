@@ -1,22 +1,22 @@
-import docs
+import document
 import sys
 import cPickle
 
 
-def voc(docs):
+def get_voc(docs):
     return {word for doc in docs for word in doc.text.split()}
 
 
 def voc_size(docs):
-    return len(voc(docs))
+    return len(get_voc(docs))
 
 
-def largest_word(docs):
-    return max(voc(docs), key=lambda word: len(word))
+def longest_word(docs):
+    return max(get_voc(docs), key=lambda word: len(word))
 
 
 def shortest_word(docs):
-    return min(voc(docs), key=lambda word: len(word))
+    return min(get_voc(docs), key=lambda word: len(word))
 
 
 def ave_word_len(docs):
@@ -26,7 +26,7 @@ def ave_word_len(docs):
 
 
 def ave_unique_word_len(docs):
-    vocab = voc(docs)
+    vocab = get_voc(docs)
     return sum(len(word) for word in vocab) / voc_size(docs)
 
 
@@ -38,7 +38,7 @@ def main(argv):
     with open(argv[0]) as f:
         docs = cPickle.load(f)
         print voc_size(docs)
-        print largest_word(docs)
+        print longest_word(docs)
         print shortest_word(docs)
         print ave_word_len(docs)
         print ave_unique_word_len(docs)
