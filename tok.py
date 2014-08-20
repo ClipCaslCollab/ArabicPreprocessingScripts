@@ -11,6 +11,14 @@ import pipe
 import string
 
 
+def tokenize_ar(flat_file_path):
+    cmd = "java -Xmx2500m -Xms2500m -XX:NewRatio=3 -jar %s -rawinput %s -rawoutdir %s -rawconfig %s"
+    jar = os.path.join(cfg.MADA_PATH, cfg.MADA_JAR)
+    config = os.path.join(cfg.MADA_PATH, cfg.MADA_CFG)
+    print cmd % (jar, flat_file_path, cfg.SCRATCH_PATH, config)
+    os.system(cmd % (jar, flat_file_path, cfg.SCRATCH_PATH, config))
+
+
 class Tokenizer(pipe.Step):
 
     def __init__(self, save=None, lang="en", stem=True, remove_stopwords=True):
@@ -46,7 +54,10 @@ class Tokenizer(pipe.Step):
             for doc in docs:
                 flat_file_path = os.path.join(cfg.SCRATCH_PATH, str(os.getpid()) + "docs.flat")
                 with open(flat_file_path, "w") as outfile:
-                    write_doc_to_file(doc, outfile)
+                    #write_doc_to_file(doc, outfile)
+		    outfile.write(doc.text)
+                    outfile.write("\n")
+
                 tokenize_ar(flat_file_path)
                 with open(flat_file_path + ".mada") as infile:
                     text = infile.read()
